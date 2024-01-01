@@ -1,3 +1,5 @@
+use std::mem::swap;
+
 use glam::{DVec2, IVec2};
 use sdl2::pixels::PixelFormatEnum;
 
@@ -28,10 +30,50 @@ impl Renderer {
   fn raycast(&mut self, world: &World, window_size: &IVec2, buffer: &mut [u8], pitch: usize) {
     // These are here to help me keep my sanity translating this tutorial.
     let w = window_size.x;
+    let h = window_size.y;
     let dir = world.player.direction;
     let plane = world.plane;
     let pos = world.player.position;
-    let map_pos = IVec2::new(pos.x.floor() as i32, pos.y.floor() as i32);
+
+    fn draw_pixel(x: i32, y: i32, r: u8, b: u8, g: u8, a: u8) {}
+
+    // This closure is from: https://github.com/ssloy/tinyrenderer/wiki/Lesson-1:-Bresenham%E2%80%99s-Line-Drawing-Algorithm#timings-fifth-and-final-attempt
+    fn draw_line(_x0: i32, _y0: i32, _x1: i32, _y1: i32, r: u8, g: u8, b: u8, a: u8) {
+      let mut x0 = _x0;
+      let mut x1 = _x1;
+      let mut y0 = _y0;
+      let mut y1 = _y1;
+      let mut steep = false;
+
+      if (x0 - x1).abs() < (y0 - y1).abs() {
+        swap(&mut x0, &mut y0);
+        swap(&mut x1, &mut y1);
+        steep = true;
+      }
+      if x0 > x1 {
+        swap(&mut x0, &mut x1);
+        swap(&mut y0, &mut y1);
+      }
+
+      let dx = x1 - x0;
+      let dy = y1 - y0;
+      let derror2 = dy.abs() * 2;
+      let mut error2 = 0;
+      let mut y = y0;
+
+      for x in x0..=x1 {
+        if steep {
+          draw_pixel(y, x, r, b, g, a);
+        } else {
+          draw_pixel(x, y, r, b, g, a);
+        }
+        error2 += derror2;
+        if error2 > dx {
+          y += if y1 > y0 { 1 } else { -1 };
+          error2 -= dx * 2;
+        }
+      }
+    }
 
     // The original tutorial is absurdly unsafe so I fixed it up.
 
@@ -41,6 +83,8 @@ impl Renderer {
       let ray_direction = DVec2::new(dir.x + plane.x * camera_x, 0.0);
 
       let mut side_dist = DVec2::new(0.0, 0.0);
+
+      let mut map_pos = IVec2::new(pos.x.floor() as i32, pos.y.floor() as i32);
 
       let delta_dist = DVec2::new(
         if ray_direction.x == 0.0 {
@@ -62,6 +106,46 @@ impl Renderer {
       let mut hit = 0;
 
       let mut side = 0;
+
+      if ray_direction.x < 0.0 {
+        step.x = -1;
+        side_dist.x = (pos.x - map_pos.x as f64) * delta_dist.x;
+      } else {
+        step.x = 1;
+        side_dist.x = (map_pos.x as f64 + 1.0 - pos.x) * delta_dist.x
+      }
+
+      if ray_direction.y < 0.0 {
+        step.y = -1;
+        side_dist.y = (pos.y - map_pos.y as f64) * delta_dist.y;
+      } else {
+        step.y = 1;
+        side_dist.y = (map_pos.y as f64 + 1.0 - pos.y) * delta_dist.y;
+      }
+
+      while hit == 0 {
+        if side_dist.x < side_dist.y {
+          side_dist.x += delta_dist.x;
+          map_pos.x += step.x;
+          side = 0;
+        } else {
+          side_dist.y += delta_dist.y;
+          map_pos.y += step.y;
+          side = 1;
+        }
+        // Check if we hit a wall.
+        if world.map.data[map_pos.x as usize][map_pos.y as usize] > 0 {
+          hit = 1;
+        }
+      }
+
+      if side == 0 {
+        perp_wall_dist = side_dist.x - delta_dist.x;
+      } else {
+        perp_wall_dist = side_dist.y - delta_dist.y;
+      }
+
+      let line_height = (h as f64 / perp_wall_dist).floor() as i32;
     }
   }
 
