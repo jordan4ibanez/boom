@@ -1,0 +1,11 @@
+[credits]
+
+[nice.textures]
+creator = "https://content.minetest.net/packages/Sharpik/sharpnet_textures/"
+license = "GPL-3.0-only"
+
+[garbage.textures]
+creator = "jordan4ibanez"
+license = "GPL-3.0-only"
+beautiful_lamp = true
+bullet_hole = true
