@@ -154,10 +154,10 @@ impl WinHandler {
   pub fn poll(&mut self) {
     self.mouse_delta.x = 0.0;
     self.mouse_delta.y = 0.0;
-    self.forward_down = false;
-    self.backward_down = false;
-    self.left_down = false;
-    self.right_down = false;
+    // self.forward_down = false;
+    // self.backward_down = false;
+    // self.left_down = false;
+    // self.right_down = false;
 
     let mut event_pump = self.sdl_context.as_ref().unwrap().event_pump().unwrap();
 
@@ -213,6 +213,24 @@ impl WinHandler {
             Keycode::D => self.right_down = true,
 
             Keycode::Escape => self.quit_received = true,
+            _ => (),
+          },
+          None => (),
+        },
+
+        event::Event::KeyUp {
+          timestamp,
+          window_id,
+          keycode,
+          scancode,
+          keymod,
+          repeat,
+        } => match keycode {
+          Some(key) => match key {
+            Keycode::W => self.forward_down = false,
+            Keycode::S => self.backward_down = false,
+            Keycode::A => self.left_down = false,
+            Keycode::D => self.right_down = false,
             _ => (),
           },
           None => (),

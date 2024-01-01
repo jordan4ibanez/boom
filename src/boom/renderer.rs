@@ -88,11 +88,11 @@ impl Renderer {
     for x in 0..w {
       let camera_x = 2.0 * (x as f64) / (w as f64) - 1.0;
 
-      let ray_direction = DVec2::new(dir.x + plane.x * camera_x, 0.0);
+      let ray_direction = DVec2::new(dir.x + plane.x * camera_x, dir.y * plane.y * camera_x);
 
       let mut side_dist = DVec2::new(0.0, 0.0);
 
-      let mut map_pos = IVec2::new(pos.x.floor() as i32, pos.y.floor() as i32);
+      let mut map_pos = IVec2::new(pos.x as i32, pos.y as i32);
 
       let delta_dist = DVec2::new(
         if ray_direction.x == 0.0 {
