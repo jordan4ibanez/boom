@@ -1,4 +1,4 @@
-use super::winhandler::WinHandler;
+use super::win_handler::WinHandler;
 
 pub struct Renderer {}
 

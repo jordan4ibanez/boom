@@ -1,9 +1,9 @@
 use spin_sleep::LoopHelper;
 
-use self::{renderer::Renderer, winhandler::WinHandler};
+use self::{renderer::Renderer, win_handler::WinHandler};
 
 mod renderer;
-mod winhandler;
+mod win_handler;
 
 pub struct Boom {
   window: WinHandler,
