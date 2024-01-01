@@ -1,15 +1,17 @@
 use std::mem::swap;
 
-use glam::{DVec2, IVec2};
+use glam::IVec2;
 
 use sdl2::pixels::PixelFormatEnum;
 
 use super::{win_handler::WinHandler, world::World};
 
-pub struct Renderer {}
+pub struct Renderer {
+  texture_size: i32,
+}
 
 ///
-/// Translated from C/C++ into Rust with SDL2 for fun.
+/// Translated from C/C++/TypeScript into Rust with SDL2 for fun.
 ///
 /// If you would like to read this tutorial and translate it into yet another language:
 /// https://lodev.org/cgtutor/raycasting.html
@@ -18,9 +20,11 @@ pub struct Renderer {}
 ///
 /// Renderer simply encapsulates the logic for drawing the game.
 ///
+/// It also stores texture data. How fancy.
+///
 impl Renderer {
   pub fn new() -> Self {
-    Renderer {}
+    Renderer { texture_size: 64 }
   }
 
   ///
