@@ -19,6 +19,6 @@ dead_code = "allow"
 unused_variables = "allow"
 
 [dependencies]
+sdl2 = { version = "0.36.0", features = ["raw-window-handle", "bundled"] }
 softbuffer = "0.4.0"
 spin_sleep = "1.1.1"
-winit = "0.29.8"

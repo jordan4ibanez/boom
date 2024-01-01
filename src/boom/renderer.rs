@@ -1,4 +1,4 @@
-use super::win::Win;
+use super::winhandler::WinHandler;
 
 pub struct Renderer {}
 
@@ -13,7 +13,7 @@ impl Renderer {
   ///
   /// Handles all logic for drawing things to the Window's framebuffer.
   ///
-  pub fn draw(&self, window: &mut Win) {
+  pub fn draw(&self, window: &mut WinHandler) {
     window.change_title("I'm drawing yay");
   }
 }

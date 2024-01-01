@@ -1,12 +1,12 @@
 use spin_sleep::LoopHelper;
 
-use self::{renderer::Renderer, win::Win};
+use self::{renderer::Renderer, winhandler::WinHandler};
 
 mod renderer;
-mod win;
+mod winhandler;
 
 pub struct Boom {
-  window: Win,
+  window: WinHandler,
   renderer: Renderer,
   should_close: bool,
   loop_helper: LoopHelper,
@@ -16,7 +16,7 @@ pub struct Boom {
 impl Boom {
   pub fn new() -> Self {
     return Boom {
-      window: Win::new(),
+      window: WinHandler::new(),
       renderer: Renderer::new(),
       should_close: false,
       loop_helper: LoopHelper::builder().build_with_target_rate(60.0),
