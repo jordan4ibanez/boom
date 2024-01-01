@@ -33,6 +33,14 @@ impl Bullet {
   }
 }
 
+struct Map {
+  data: i8[][]
+}
+
+impl Map {
+    
+}
+
 pub struct World {
   mobs: Vec<Mob>,
   bullet: HashMap<String, Bullet>,
