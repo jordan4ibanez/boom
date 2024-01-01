@@ -29,13 +29,6 @@ impl Renderer {
   /// This creates an oddly powerful feeling with the implementation.
   ///
   fn raycast(&mut self, world: &World, window_size: &IVec2, buffer: &mut [u8], pitch: usize) {
-    // These are here to help me keep my sanity translating this tutorial.
-    let w = window_size.x;
-    let h = window_size.y;
-    let dir = world.player.direction;
-    let plane = world.plane;
-    let pos = world.player.position;
-
     let mut draw_pixel = |x: usize, y: usize, r: u8, b: u8, g: u8, a: u8| {
       let index = y * pitch + x * 4;
 
@@ -84,133 +77,153 @@ impl Renderer {
     };
 
     // The original tutorial is absurdly unsafe so I fixed it up.
+    // These are here to help me keep my sanity translating this tutorial.
+    let w = window_size.x;
+    let h = window_size.y;
+    let dir = world.player.direction;
+    let dirX = dir.x;
+    let dirY = dir.y;
+    let plane = world.plane;
+    let planeX = plane.x;
+    let planeY = plane.y;
+    let pos = world.player.position;
+    let posX = pos.x;
+    let posY = pos.y;
+    let worldMap = world.map.data;
+
+    // println!("plane: {:?}", plane);
 
     for x in 0..w {
-      let camera_x = 2.0 * (x as f64) / (w as f64) - 1.0;
+      //calculate ray position and direction
+      let cameraX: f64 = 2.0 * (x as f64) / (w as f64) - 1.0; //x-coordinate in camera space
+      let rayDirX: f64 = dirX + planeX * cameraX;
+      let rayDirY = dirY + planeY * cameraX;
+      //which box of the map we're in
+      let mut mapX: i32 = (posX) as i32;
+      let mut mapY: i32 = (posY) as i32;
 
-      let ray_direction = DVec2::new(dir.x + plane.x * camera_x, dir.y * plane.y * camera_x);
+      //length of ray from current position to next x or y-side
+      let mut sideDistX: f64;
+      let mut sideDistY: f64;
 
-      let mut side_dist = DVec2::new(0.0, 0.0);
-
-      let mut map_pos = IVec2::new(pos.x as i32, pos.y as i32);
-
-      let delta_dist = DVec2::new(
-        if ray_direction.x == 0.0 {
-          1e30
-        } else {
-          (1.0 / ray_direction.x).abs()
-        },
-        if ray_direction.y == 0.0 {
-          1e30
-        } else {
-          (1.0 / ray_direction.y).abs()
-        },
-      );
-
-      let perp_wall_dist;
-
-      let mut step = IVec2::new(0, 0);
-
-      let mut hit = 0;
-
-      let mut side = 0;
-
-      if ray_direction.x < 0.0 {
-        step.x = -1;
-        side_dist.x = (pos.x - map_pos.x as f64) * delta_dist.x;
+      //length of ray from one x or y-side to next x or y-side
+      //these are derived as:
+      //deltaDistX = sqrt(1 + (rayDirY * rayDirY) / (rayDirX * rayDirX))
+      //deltaDistY = sqrt(1 + (rayDirX * rayDirX) / (rayDirY * rayDirY))
+      //which can be simplified to abs(|rayDir| / rayDirX) and abs(|rayDir| / rayDirY)
+      //where |rayDir| is the length of the vector (rayDirX, rayDirY). Its length,
+      //unlike (dirX, dirY) is not 1, however this does not matter, only the
+      //ratio between deltaDistX and deltaDistY matters, due to the way the DDA
+      //stepping further below works. So the values can be computed as below.
+      // Division through zero is prevented, even though technically that's not
+      // needed in C++ with IEEE 754 floating point values.
+      let deltaDistX: f64 = if (rayDirX == 0.0) {
+        1e30
       } else {
-        step.x = 1;
-        side_dist.x = (map_pos.x as f64 + 1.0 - pos.x) * delta_dist.x
-      }
-
-      if ray_direction.y < 0.0 {
-        step.y = -1;
-        side_dist.y = (pos.y - map_pos.y as f64) * delta_dist.y;
+        (1.0 / rayDirX).abs()
+      };
+      let deltaDistY: f64 = if (rayDirY == 0.0) {
+        1e30
       } else {
-        step.y = 1;
-        side_dist.y = (map_pos.y as f64 + 1.0 - pos.y) * delta_dist.y;
-      }
+        (1.0 / rayDirY).abs()
+      };
 
-      while hit == 0 {
-        if side_dist.x < side_dist.y {
-          side_dist.x += delta_dist.x;
-          map_pos.x += step.x;
+      let perpWallDist: f64;
+
+      //what direction to step in x or y-direction (either +1 or -1)
+      let stepX: i32;
+      let stepY: i32;
+
+      let mut hit: i32 = 0; //was there a wall hit?
+      let mut side: i32 = 0; //was a NS or a EW wall hit?
+                             //calculate step and initial sideDist
+      if (rayDirX < 0.0) {
+        stepX = -1;
+        sideDistX = (posX - (mapX as f64)) * deltaDistX;
+      } else {
+        stepX = 1;
+        sideDistX = ((mapX as f64) + 1.0 - posX) * deltaDistX;
+      }
+      if (rayDirY < 0.0) {
+        stepY = -1;
+        sideDistY = (posY - (mapY as f64)) * deltaDistY;
+      } else {
+        stepY = 1;
+        sideDistY = ((mapY as f64) + 1.0 - posY) * deltaDistY;
+      }
+      //perform DDA
+      while (hit == 0) {
+        //jump to next map square, either in x-direction, or in y-direction
+        if (sideDistX < sideDistY) {
+          sideDistX += deltaDistX;
+          mapX += stepX;
           side = 0;
         } else {
-          side_dist.y += delta_dist.y;
-          map_pos.y += step.y;
+          sideDistY += deltaDistY;
+          mapY += stepY;
           side = 1;
         }
-        // Check if we hit a wall.
-        if world.map.data[map_pos.x as usize][map_pos.y as usize] > 0 {
-          hit = 1;
-        }
+        //Check if ray has hit a wall
+        if (worldMap[mapX as usize][mapY as usize] > 0) {
+          hit = 1
+        };
       }
-
+      //Calculate distance projected on camera direction. This is the shortest distance from the point where the wall is
+      //hit to the camera plane. Euclidean to center camera point would give fisheye effect!
+      //This can be computed as (mapX - posX + (1 - stepX) / 2) / rayDirX for side == 0, or same formula with Y
+      //for size == 1, but can be simplified to the code below thanks to how sideDist and deltaDist are computed:
+      //because they were left scaled to |rayDir|. sideDist is the entire length of the ray above after the multiple
+      //steps, but we subtract deltaDist once because one step more into the wall was taken above.
       if side == 0 {
-        perp_wall_dist = side_dist.x - delta_dist.x;
+        perpWallDist = (sideDistX - deltaDistX)
       } else {
-        perp_wall_dist = side_dist.y - delta_dist.y;
-      }
+        perpWallDist = (sideDistY - deltaDistY)
+      };
 
-      let line_height = (h as f64 / perp_wall_dist).floor() as i32;
+      //Calculate height of line to draw on screen
+      let lineHeight: i32 = ((h as f64) / perpWallDist) as i32;
 
-      let mut draw_start = -line_height / 2 + h / 2;
-      if draw_start < 0 {
-        draw_start = 0
-      }
-      let mut draw_end = line_height / 2 + h / 2;
-      if draw_end >= h {
-        draw_end = h - 1;
-      }
+      //calculate lowest and highest pixel to fill in current stripe
+      let mut drawStart: i32 = -lineHeight / 2 + h / 2;
+      if (drawStart < 0) {
+        drawStart = 0
+      };
+      let mut drawEnd: i32 = lineHeight / 2 + h / 2;
+      if (drawEnd >= h) {
+        drawEnd = h - 1
+      };
 
+      //choose wall color
       let mut r: u8 = 0;
       let mut g: u8 = 0;
       let mut b: u8 = 0;
-      let mut a: u8 = 255;
-
-      match world.map.data[map_pos.x as usize][map_pos.y as usize] {
-        1 => {
-          r = 255;
-        }
-        2 => {
-          g = 255;
-        }
-        3 => {
-          b = 255;
-        }
+      let mut a: u8 = 0;
+      match (worldMap[mapX as usize][mapY as usize]) {
+        1 => r = 255, //red
+        2 => g = 255, //green
+        3 => b = 255, //blue
         4 => {
           r = 255;
           g = 255;
+          b = 255;
+        } //white
+        // default: color = RGB_Yellow; break; //yellow
+        _ => {
+          r = 255;
+          g = 255;
         }
-        5 => {
-          r = 120;
-          b = 155;
-        }
-        _ => (),
       }
 
-      if side == 1 {
+      //give x and y sides different brightness
+      if (side == 1) {
         r /= 2;
         g /= 2;
         b /= 2;
       }
 
-      draw_line(x, draw_start, x, draw_end, r, g, b, a);
+      //draw the pixels of the stripe as a vertical line
+      draw_line(x, drawStart, x, drawEnd, r, g, b, a);
     }
-
-    // let mut random = rand::thread_rng();
-    // let mut cool = || -> u8 { random.gen_range(0..255) as u8 };
-
-    // for y in 0..window_size.y {
-    //   for x in 0..window_size.x {
-    //     draw_pixel(x as usize, y as usize, cool(), cool(), cool(), cool());
-    //   }
-    // }
-
-    // || {
-
-    // }
   }
 
   ///
