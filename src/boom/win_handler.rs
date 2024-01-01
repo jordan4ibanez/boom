@@ -1,8 +1,7 @@
-use glam::IVec2;
+use glam::{IVec2, Vec2};
 use sdl2::{
   event::{self},
   keyboard::Keycode,
-  mouse::Cursor,
   rect::Rect,
   render::{Canvas, Texture},
   video::Window,
@@ -21,6 +20,8 @@ pub struct WinHandler {
   pub quit_received: bool,
   pub window_size: IVec2,
   mouse_captured: bool,
+  mouse_delta: Vec2,
+  mouse_sensitivity: f64,
 }
 
 impl WinHandler {
@@ -32,13 +33,15 @@ impl WinHandler {
       quit_received: false,
       window_size: IVec2::new(512, 512),
       mouse_captured: false,
+      mouse_delta: Vec2::new(0.0, 0.0),
+      mouse_sensitivity: 100.0,
     };
 
     // I'm doing this a bit differently than I usually do.
     // Since I've never used SDL2 before, I'm just going to assume
     // literally any of this can fail randomly so it's handled as so.
 
-    sdl2::hint::set("SDL_VIDEO_EXTERNAL_CONTEXT", "1");
+    // sdl2::hint::set("SDL_VIDEO_EXTERNAL_CONTEXT", "1");
 
     new_window.sdl_context = Some(sdl2::init().unwrap());
 
@@ -141,6 +144,9 @@ impl WinHandler {
   /// Consider this glfw's glfwPollEvents but not.
   ///
   pub fn poll(&mut self) {
+    self.mouse_delta.x = 0.0;
+    self.mouse_delta.y = 0.0;
+
     let mut event_pump = self.sdl_context.as_ref().unwrap().event_pump().unwrap();
 
     for event in event_pump.poll_iter() {
@@ -171,7 +177,9 @@ impl WinHandler {
           y,
           xrel,
           yrel,
-        } => {}
+        } => {
+          println!("{} {} ", xrel, yrel);
+        }
 
         event::Event::KeyDown {
           timestamp,
