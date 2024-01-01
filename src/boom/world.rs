@@ -63,9 +63,9 @@ impl Bullet {
 /// Raw map data.
 ///
 pub struct Map {
-  min: IVec2,
-  max: IVec2,
-  data: Box<[[i32; 24]; 24]>,
+  pub min: IVec2,
+  pub max: IVec2,
+  pub data: [[i32; 24]; 24],
 }
 
 impl Map {
@@ -73,7 +73,7 @@ impl Map {
     Map {
       min: IVec2::new(0, 0),
       max: IVec2::new(24, 24),
-      data: Box::new([
+      data: [
         [
           8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 4, 6, 4, 4, 6, 4, 6, 4, 4, 4, 6, 4,
         ],
@@ -146,7 +146,7 @@ impl Map {
         [
           2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5,
         ],
-      ]),
+      ],
     }
   }
 
