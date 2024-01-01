@@ -20,7 +20,6 @@ unused_variables = "allow"
 
 [dependencies]
 glam = "0.25.0"
-ndarray = "0.15.6"
 rayon = "1.8.0"
 
 sdl2 = { version = "0.36.0", features = ["bundled"] }
