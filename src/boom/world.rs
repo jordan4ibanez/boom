@@ -3,6 +3,9 @@ use std::collections::HashMap;
 use glam::IVec2;
 use glam::Vec2;
 
+///
+/// The player. It's you!
+///
 struct Player {
   alive: bool,
   position: Vec2,
@@ -12,13 +15,16 @@ struct Player {
 impl Player {
   pub fn new() -> Self {
     Player {
-      alive: todo!(),
-      position: todo!(),
-      direction: todo!(),
+      alive: true,
+      position: Vec2::new(22.0, 12.0),
+      direction: Vec2::new(-1.0, 0.0),
     }
   }
 }
 
+///
+/// Enemies in the game.
+///
 struct Mob {
   alive: bool,
   position: Vec2,
@@ -36,6 +42,9 @@ impl Mob {
   }
 }
 
+///
+/// The bullet the player can shoot. Pew pew.
+///
 struct Bullet {
   position: Vec2,
   direction: Vec2,
@@ -50,6 +59,9 @@ impl Bullet {
   }
 }
 
+///
+/// Raw map data.
+///
 struct Map {
   min: IVec2,
   max: IVec2,
@@ -159,6 +171,9 @@ impl World {
     }
   }
 
+  ///
+  /// What the world will do on each tick.
+  ///
   pub fn on_tick(&mut self, delta: f64) {
     println!("tick tock {}", delta)
   }
