@@ -45,7 +45,7 @@ impl Boom {
       .window
       .change_title(format!("Boom | delta: {}", self.delta).as_str());
 
-    self.renderer.draw(&mut self.window, &self.world);
+    self.renderer.draw(&mut self.window, &mut self.world);
 
     self.loop_helper.loop_sleep();
   }

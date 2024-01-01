@@ -1,4 +1,4 @@
-use sdl2::pixels::PixelFormatEnum;
+use sdl2::{pixels::PixelFormatEnum, render::Texture};
 
 use super::{win_handler::WinHandler, world::World};
 
@@ -13,16 +13,21 @@ impl Renderer {
   }
 
   ///
+  /// The actual raycast into the world. Draws to the framebuffer.
+  ///
+  fn raycast(&mut self, world: &mut World, texture: &mut Texture) {}
+
+  ///
   /// Handles all logic for drawing things to the Window's framebuffer.
   ///
-  pub fn draw(&self, window: &mut WinHandler, world: &World) {
+  pub fn draw(&mut self, window: &mut WinHandler, world: &mut World) {
     // We create a new frame buffer literally every frame.
     window.canvas.as_mut().unwrap().clear();
 
     let window_size = &window.window_size;
 
     let texture_creator = window.canvas.as_ref().unwrap().texture_creator();
-    let mut surface = texture_creator
+    let mut texture = texture_creator
       .create_texture_streaming(
         PixelFormatEnum::RGBA8888,
         window_size.x as u32,
@@ -31,22 +36,23 @@ impl Renderer {
       .map_err(|e| panic!("{}", e))
       .unwrap();
 
-    surface
-      .with_lock(None, |buffer, pitch| {
-        println!("bufflength = {}", buffer.len());
-        for y in 0..window_size.y as usize {
-          for x in 0..window_size.x as usize {
-            let index = y * pitch + x * 4;
+    self.raycast(world, &mut texture);
 
-            buffer[index] = x as u8;
-            buffer[index + 1] = y as u8;
-            buffer[index + 2] = 0;
-            buffer[index + 3] = 255;
-          }
-        }
-      })
-      .unwrap();
+    // surface
+    //   .with_lock(None, |buffer, pitch| {
+    //     for y in 0..window_size.y as usize {
+    //       for x in 0..window_size.x as usize {
+    //         let index = y * pitch + x * 4;
 
-    window.draw(&surface);
+    //         buffer[index] = x as u8;
+    //         buffer[index + 1] = y as u8;
+    //         buffer[index + 2] = 0;
+    //         buffer[index + 3] = 255;
+    //       }
+    //     }
+    //   })
+    //   .unwrap();
+
+    window.draw(&texture);
   }
 }

@@ -167,6 +167,7 @@ pub struct World {
   mobs: Vec<Mob>,
   bullet: HashMap<String, Bullet>,
   map: Map,
+  plane: Vec2,
 }
 
 impl World {
@@ -176,6 +177,7 @@ impl World {
       mobs: vec![],
       bullet: HashMap::new(),
       map: Map::new(),
+      plane: Vec2::new(0.0, 0.66),
     }
   }
 
