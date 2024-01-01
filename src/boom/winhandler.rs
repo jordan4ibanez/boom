@@ -1,7 +1,9 @@
 #[cfg(feature = "raw-window-handle")]
 use std::ops::Deref;
 
-use sdl2::{pixels::PixelFormatEnum, render::Canvas, video::Window, Sdl, VideoSubsystem};
+use sdl2::{
+  event, pixels::PixelFormatEnum, rect::Rect, render::Canvas, video::Window, Sdl, VideoSubsystem,
+};
 
 ///
 /// Win encapsulates the Window components to clean up the
@@ -58,7 +60,31 @@ impl WinHandler {
       .map_err(|e| panic!("{}", e))
       .unwrap();
 
-    surface.with_lock(None, |buf, pitch| {});
+    surface
+      .with_lock(None, |buffer, pitch| {
+        for y in 0..256 {
+          for x in 0..256 {
+            let index = y * pitch + x * 4;
+
+            buffer[index] = x as u8;
+            buffer[index + 1] = y as u8;
+            buffer[index + 2] = 0;
+            buffer[index + 3] = 255;
+          }
+        }
+      })
+      .unwrap();
+
+    new_window.canvas.as_mut().unwrap().clear();
+
+    new_window
+      .canvas
+      .as_mut()
+      .unwrap()
+      .copy(&surface, None, Rect::new(0, 0, 256, 256))
+      .unwrap();
+
+    new_window.canvas.as_mut().unwrap().present();
 
     new_window
   }
