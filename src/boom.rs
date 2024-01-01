@@ -60,7 +60,7 @@ impl Boom {
 
     self
       .window
-      .change_title(format!("Boom | delta: {} | FPS: {}", self.delta, self.current_fps).as_str());
+      .change_title(format!("Boom | FPS: {} | delta: {}", self.current_fps, self.delta).as_str());
 
     self.renderer.draw(&mut self.window, &mut self.world);
 
