@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use glam::DVec2;
 use glam::IVec2;
 
+use super::win_handler::WinHandler;
+
 ///
 /// The player. It's you!
 ///
@@ -181,10 +183,16 @@ impl World {
     }
   }
 
+  fn do_player_controls(&mut self, window: &WinHandler) {
+    println!("{}", window.mouse_delta)
+  }
+
   ///
   /// What the world will do on each tick.
   ///
-  pub fn on_tick(&mut self, delta: f64) {
-    println!("tick tock {}", delta)
+  pub fn on_tick(&mut self, delta: f64, window: &WinHandler) {
+    // println!("tick tock {}", delta)
+
+    self.do_player_controls(window);
   }
 }

@@ -54,7 +54,7 @@ impl Boom {
       self.should_close = true;
     }
 
-    // self.world.on_tick(self.delta);
+    self.world.on_tick(self.delta, &mut self.window);
 
     self.update_fps();
 

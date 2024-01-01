@@ -20,7 +20,7 @@ pub struct WinHandler {
   pub quit_received: bool,
   pub window_size: IVec2,
   mouse_captured: bool,
-  mouse_delta: DVec2,
+  pub mouse_delta: DVec2,
   mouse_sensitivity: f64,
 }
 
