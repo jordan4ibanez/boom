@@ -84,6 +84,8 @@ impl WinHandler {
 
   ///
   /// Draws a texture straight into the canvas.
+  /// 
+  /// Also shows it immediately.
   ///
   pub fn draw(&mut self, texture: &Texture) {
     self
