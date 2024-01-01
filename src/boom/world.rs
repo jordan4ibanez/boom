@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use glam::Vec2;
+use ndarray::prelude::*;
 
 struct Mob {
   alive: bool,
