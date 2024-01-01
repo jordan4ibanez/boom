@@ -3,8 +3,7 @@ use std::ops::Deref;
 
 use glam::IVec2;
 use sdl2::{
-  event::{self, EventPollIterator},
-  pixels::PixelFormatEnum,
+  event::{self},
   rect::Rect,
   render::{Canvas, Texture},
   video::Window,
