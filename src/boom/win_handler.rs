@@ -2,6 +2,7 @@ use glam::IVec2;
 use sdl2::{
   event::{self},
   keyboard::Keycode,
+  mouse::Cursor,
   rect::Rect,
   render::{Canvas, Texture},
   video::Window,
@@ -147,6 +148,7 @@ impl WinHandler {
         event::Event::Quit { timestamp } => {
           self.quit_received = true;
         }
+
         event::Event::Window {
           timestamp,
           window_id,
@@ -159,6 +161,17 @@ impl WinHandler {
           }
           _ => (),
         },
+
+        event::Event::MouseMotion {
+          timestamp,
+          window_id,
+          which,
+          mousestate,
+          x,
+          y,
+          xrel,
+          yrel,
+        } => {}
 
         event::Event::KeyDown {
           timestamp,
