@@ -1,6 +1,6 @@
 use spin_sleep::LoopHelper;
 
-use self::{renderer::Renderer, win_handler::WinHandler};
+use self::{renderer::Renderer, win_handler::WinHandler, world::World};
 
 mod renderer;
 mod win_handler;
@@ -9,6 +9,7 @@ mod world;
 pub struct Boom {
   window: WinHandler,
   renderer: Renderer,
+  world: World,
   should_close: bool,
   loop_helper: LoopHelper,
   delta: f64,
@@ -19,6 +20,7 @@ impl Boom {
     return Boom {
       window: WinHandler::new(),
       renderer: Renderer::new(),
+      world: World::new(),
       should_close: false,
       loop_helper: LoopHelper::builder().build_with_target_rate(60.0),
       delta: 0.0,
@@ -36,6 +38,8 @@ impl Boom {
     if self.window.quit_received {
       self.should_close = true;
     }
+
+    self.world.on_tick(self.delta);
 
     self
       .window
