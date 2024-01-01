@@ -184,7 +184,25 @@ impl World {
   }
 
   fn do_player_controls(&mut self, window: &WinHandler) {
-    println!("{}", window.mouse_delta)
+
+    println!("{}", window.mouse_delta);
+
+    let mouse_delta = window.mouse_delta;
+
+    let rot_speed = mouse_delta.x;
+
+    let old_dir_x = self.player.direction.x;
+
+    self.player.direction.x = self.player.direction.x * (-rot_speed).cos() - self.player.direction.y * (-rot_speed).sin();
+
+    self.player.direction.y = old_dir_x * (-rot_speed).sin() + self.player.direction.y * (-rot_speed).cos();
+
+    let old_plane_x = self.plane.x.clone();
+
+    self.plane.x = self.plane.x * (-rot_speed).cos() - self.plane.y * (-rot_speed).sin();
+
+    self.plane.y = old_plane_x * (-rot_speed).sin() + self.plane.y * (-rot_speed).cos();
+
   }
 
   ///
