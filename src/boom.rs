@@ -30,6 +30,12 @@ impl Boom {
   fn main(&mut self) {
     self.delta = self.loop_helper.loop_start_s();
 
+    self.window.poll();
+
+    if self.window.quit_received {
+      self.should_close = true;
+    }
+
     self
       .window
       .change_title(format!("Boom | delta: {}", self.delta).as_str());

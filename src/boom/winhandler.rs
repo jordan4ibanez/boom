@@ -14,6 +14,7 @@ pub struct WinHandler {
   sdl_context: Option<Sdl>,
   video_subsystem: Option<VideoSubsystem>,
   canvas: Option<Canvas<Window>>,
+  pub quit_received: bool,
 }
 
 impl WinHandler {
@@ -22,6 +23,7 @@ impl WinHandler {
       sdl_context: None,
       video_subsystem: None,
       canvas: None,
+      quit_received: false,
     };
 
     // I'm doing this a bit differently than I usually do.
@@ -99,12 +101,14 @@ impl WinHandler {
   ///
   /// Consider this glfw's glfwPollEvents but not.
   ///
-  pub fn poll(&self) {
+  pub fn poll(&mut self) {
     let mut event_pump = self.sdl_context.as_ref().unwrap().event_pump().unwrap();
 
     for event in event_pump.poll_iter() {
       match event {
-        event::Event::Quit { timestamp } => todo!(),
+        event::Event::Quit { timestamp } => {
+          self.quit_received = true;
+        }
         _ => (),
       }
     }
