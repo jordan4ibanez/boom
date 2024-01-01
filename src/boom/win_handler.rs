@@ -34,7 +34,7 @@ impl WinHandler {
       window_size: IVec2::new(512, 512),
       mouse_captured: false,
       mouse_delta: DVec2::new(0.0, 0.0),
-      mouse_sensitivity: 100.0,
+      mouse_sensitivity: 10.0,
     };
 
     // I'm doing this a bit differently than I usually do.
