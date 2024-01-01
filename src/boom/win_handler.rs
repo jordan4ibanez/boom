@@ -1,4 +1,4 @@
-use glam::{IVec2, Vec2};
+use glam::{DVec2, IVec2};
 use sdl2::{
   event::{self},
   keyboard::Keycode,
@@ -20,7 +20,7 @@ pub struct WinHandler {
   pub quit_received: bool,
   pub window_size: IVec2,
   mouse_captured: bool,
-  mouse_delta: Vec2,
+  mouse_delta: DVec2,
   mouse_sensitivity: f64,
 }
 
@@ -33,7 +33,7 @@ impl WinHandler {
       quit_received: false,
       window_size: IVec2::new(512, 512),
       mouse_captured: false,
-      mouse_delta: Vec2::new(0.0, 0.0),
+      mouse_delta: DVec2::new(0.0, 0.0),
       mouse_sensitivity: 100.0,
     };
 
@@ -178,7 +178,11 @@ impl WinHandler {
           xrel,
           yrel,
         } => {
-          println!("{} {} ", xrel, yrel);
+          if self.mouse_captured {
+            // Brings the sensitivity into a more sensitive range
+            self.mouse_delta.x = (xrel as f64 * self.mouse_sensitivity) / 1000.0;
+            self.mouse_delta.y = (yrel as f64 * self.mouse_sensitivity) / 1000.0;
+          }
         }
 
         event::Event::KeyDown {
