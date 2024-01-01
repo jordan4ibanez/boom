@@ -45,7 +45,7 @@ impl Mob {
 ///
 /// The bullet the player can shoot. Pew pew.
 ///
-struct Bullet {
+pub struct Bullet {
   position: DVec2,
   direction: DVec2,
 }
