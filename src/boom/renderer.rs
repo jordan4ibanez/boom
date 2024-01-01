@@ -35,10 +35,17 @@ impl Renderer {
     let plane = world.plane;
     let pos = world.player.position;
 
-    fn draw_pixel(x: i32, y: i32, r: u8, b: u8, g: u8, a: u8) {}
+    let mut draw_pixel = |x: usize, y: usize, r: u8, b: u8, g: u8, a: u8| {
+      let index = y * pitch + x * 4;
+
+      buffer[index] = x as u8;
+      buffer[index + 1] = y as u8;
+      buffer[index + 2] = 0;
+      buffer[index + 3] = 255;
+    };
 
     // This closure is from: https://github.com/ssloy/tinyrenderer/wiki/Lesson-1:-Bresenham%E2%80%99s-Line-Drawing-Algorithm#timings-fifth-and-final-attempt
-    fn draw_line(_x0: i32, _y0: i32, _x1: i32, _y1: i32, r: u8, g: u8, b: u8, a: u8) {
+    let draw_line = |_x0: i32, _y0: i32, _x1: i32, _y1: i32, r: u8, g: u8, b: u8, a: u8| {
       let mut x0 = _x0;
       let mut x1 = _x1;
       let mut y0 = _y0;
@@ -63,9 +70,9 @@ impl Renderer {
 
       for x in x0..=x1 {
         if steep {
-          draw_pixel(y, x, r, b, g, a);
+          draw_pixel(y as usize, x as usize, r, b, g, a);
         } else {
-          draw_pixel(x, y, r, b, g, a);
+          draw_pixel(x as usize, y as usize, r, b, g, a);
         }
         error2 += derror2;
         if error2 > dx {
@@ -73,7 +80,7 @@ impl Renderer {
           error2 -= dx * 2;
         }
       }
-    }
+    };
 
     // The original tutorial is absurdly unsafe so I fixed it up.
 
