@@ -3,6 +3,22 @@ use std::collections::HashMap;
 use glam::IVec2;
 use glam::Vec2;
 
+struct Player {
+  alive: bool,
+  position: Vec2,
+  direction: Vec2,
+}
+
+impl Player {
+  pub fn new() -> Self {
+    Player {
+      alive: todo!(),
+      position: todo!(),
+      direction: todo!(),
+    }
+  }
+}
+
 struct Mob {
   alive: bool,
   position: Vec2,
@@ -131,6 +147,7 @@ impl Map {
 pub struct World {
   mobs: Vec<Mob>,
   bullet: HashMap<String, Bullet>,
+  map: Map,
 }
 
 impl World {
@@ -138,6 +155,7 @@ impl World {
     World {
       mobs: vec![],
       bullet: HashMap::new(),
+      map: Map::new(),
     }
   }
 
