@@ -1,5 +1,5 @@
 use glam::IVec2;
-use sdl2::{pixels::PixelFormatEnum, render::Texture};
+use sdl2::pixels::PixelFormatEnum;
 
 use super::{win_handler::WinHandler, world::World};
 
@@ -16,7 +16,7 @@ impl Renderer {
   ///
   /// The actual raycast into the world. Draws to the framebuffer.
   ///
-  fn raycast(&mut self, world: &mut World, texture: &mut Texture, window_size: &IVec2) {}
+  fn raycast(&mut self, world: &World, window_size: &IVec2, buffer: &mut [u8], pitch: usize) {}
 
   ///
   /// Handles all logic for drawing things to the Window's framebuffer.
@@ -37,22 +37,22 @@ impl Renderer {
       .map_err(|e| panic!("{}", e))
       .unwrap();
 
-    self.raycast(world, &mut texture, window_size);
+    texture
+      .with_lock(None, |buffer, pitch| {
+        self.raycast(world, window_size, buffer, pitch);
 
-    // surface
-    //   .with_lock(None, |buffer, pitch| {
-    //     for y in 0..window_size.y as usize {
-    //       for x in 0..window_size.x as usize {
-    //         let index = y * pitch + x * 4;
+        // for y in 0..window_size.y as usize {
+        //   for x in 0..window_size.x as usize {
+        //     let index = y * pitch + x * 4;
 
-    //         buffer[index] = x as u8;
-    //         buffer[index + 1] = y as u8;
-    //         buffer[index + 2] = 0;
-    //         buffer[index + 3] = 255;
-    //       }
-    //     }
-    //   })
-    //   .unwrap();
+        //     buffer[index] = x as u8;
+        //     buffer[index + 1] = y as u8;
+        //     buffer[index + 2] = 0;
+        //     buffer[index + 3] = 255;
+        //   }
+        // }
+      })
+      .unwrap();
 
     window.draw(&texture);
   }
