@@ -1,9 +1,9 @@
-use std::{borrow::Borrow, rc::Rc};
+use std::rc::Rc;
 
 use softbuffer::{Context, Surface};
 use winit::{
   event_loop::EventLoop,
-  window::{self, Window, WindowBuilder},
+  window::{Window, WindowBuilder},
 };
 
 ///
