@@ -4,6 +4,7 @@ use self::{renderer::Renderer, win_handler::WinHandler};
 
 mod renderer;
 mod win_handler;
+mod world;
 
 pub struct Boom {
   window: WinHandler,
