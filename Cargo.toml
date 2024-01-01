@@ -20,4 +20,5 @@ unused_variables = "allow"
 
 [dependencies]
 softbuffer = "0.4.0"
+spin_sleep = "1.1.1"
 winit = "0.29.8"

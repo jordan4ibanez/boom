@@ -130,6 +130,7 @@ name = "boom"
 version = "0.1.0"
 dependencies = [
  "softbuffer",
+ "spin_sleep",
  "winit",
 ]
 
@@ -979,6 +980,16 @@ dependencies = [
  "web-sys",
  "windows-sys 0.48.0",
  "x11rb 0.12.0",
+]
+
+[[package]]
+name = "spin_sleep"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cafa7900db085f4354dbc7025e25d7a839a14360ea13b5fc4fd717f2d3b23134"
+dependencies = [
+ "once_cell",
+ "winapi",
 ]
 
 [[package]]
