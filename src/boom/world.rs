@@ -25,7 +25,7 @@ impl Player {
 ///
 /// Enemies in the game. If you can call them that.
 ///
-struct Mob {
+pub struct Mob {
   alive: bool,
   position: DVec2,
   yaw: f64,
