@@ -46,4 +46,8 @@ impl Win {
 
     new_window
   }
+
+  pub fn change_title(&mut self) {
+    self.window.as_ref().unwrap().set_title("hello");
+  }
 }
