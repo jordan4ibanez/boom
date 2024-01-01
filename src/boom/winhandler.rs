@@ -1,7 +1,7 @@
-use std::rc::Rc;
+#[cfg(feature = "raw-window-handle")]
+use std::ops::Deref;
 
-use sdl2::{Sdl, VideoSubsystem};
-use softbuffer::{Context, Surface};
+use sdl2::{pixels::PixelFormatEnum, render::Canvas, video::Window, Sdl, VideoSubsystem};
 
 ///
 /// Win encapsulates the Window components to clean up the
@@ -9,9 +9,9 @@ use softbuffer::{Context, Surface};
 /// during runtime.
 ///
 pub struct WinHandler {
-  // surface: Option<Surface<Rc<Window>, Rc<Window>>>,
   sdl_context: Option<Sdl>,
   video_subsystem: Option<VideoSubsystem>,
+  canvas: Option<Canvas<Window>>,
 }
 
 impl WinHandler {
@@ -19,27 +19,46 @@ impl WinHandler {
     let mut new_window = WinHandler {
       sdl_context: None,
       video_subsystem: None,
+      canvas: None,
     };
 
     // I'm doing this a bit differently than I usually do.
     // Since I've never used SDL2 before, I'm just going to assume
     // literally any of this can fail randomly so it's handled as so.
 
+    sdl2::hint::set("SDL_VIDEO_EXTERNAL_CONTEXT", "1");
+
     new_window.sdl_context = Some(sdl2::init().unwrap());
 
     new_window.video_subsystem = Some(new_window.sdl_context.as_ref().unwrap().video().unwrap());
 
-    // The window context for the actual window.
-    // new_window.context = Some(Context::new(new_window.window.clone().unwrap().clone()).unwrap());
+    let window = new_window
+      .video_subsystem
+      .as_ref()
+      .unwrap()
+      .window("test1234", 549, 12345)
+      .resizable()
+      .position_centered()
+      .build()
+      .map_err(|e| panic!("{}", e))
+      .unwrap();
+
+    new_window.canvas = Some(
+      window
+        .into_canvas()
+        .build()
+        .map_err(|e| panic!("{}", e))
+        .unwrap(),
+    );
 
     // And then finally, we create the surface to draw on.
-    // new_window.surface = Some(
-    //   Surface::new(
-    //     new_window.context.as_ref().unwrap(),
-    //     new_window.window.clone().unwrap().clone(),
-    //   )
-    //   .unwrap(),
-    // );
+    let texture_creator = new_window.canvas.as_ref().unwrap().texture_creator();
+    let mut surface = texture_creator
+      .create_texture_streaming(PixelFormatEnum::RGBA8888, 256, 256)
+      .map_err(|e| panic!("{}", e))
+      .unwrap();
+
+    surface.with_lock(None, |buf, pitch| {});
 
     new_window
   }
