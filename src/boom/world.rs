@@ -183,26 +183,88 @@ impl World {
     }
   }
 
-  fn do_player_controls(&mut self, window: &WinHandler) {
+  fn do_player_controls(&mut self, delta: f64, window: &WinHandler) {
+    let move_speed = delta * 5.0;
+    let mut moving = false;
 
-    println!("{}", window.mouse_delta);
+    if window.forward_down {
+      if self.map.data
+        [(self.player.position.x + self.player.direction.x * move_speed).floor() as usize]
+        [(self.player.position.y).floor() as usize]
+        == 0
+      {
+        self.player.position.x += self.player.direction.x * move_speed;
+      }
+      if self.map.data[(self.player.position.x).floor() as usize]
+        [(self.player.position.y + self.player.direction.y * move_speed).floor() as usize]
+        == 0
+      {
+        self.player.position.y += self.player.direction.y * move_speed;
+      }
+      moving = true
+    }
+
+    if window.backward_down {
+      if self.map.data
+        [(self.player.position.x - self.player.direction.x * move_speed).floor() as usize]
+        [(self.player.position.y).floor() as usize]
+        == 0
+      {
+        self.player.position.x -= self.player.direction.x * move_speed;
+      }
+      if self.map.data[(self.player.position.x).floor() as usize]
+        [(self.player.position.y - self.player.direction.y * move_speed).floor() as usize]
+        == 0
+      {
+        self.player.position.y -= self.player.direction.y * move_speed;
+      }
+      moving = true;
+    }
+
+    if window.right_down {
+      if self.map.data[(self.player.position.x + self.plane.x * move_speed).floor() as usize]
+        [(self.player.position.y).floor() as usize]
+        == 0
+      {
+        self.player.position.x += self.plane.x * move_speed;
+      }
+      if self.map.data[(self.player.position.x).floor() as usize]
+        [(self.player.position.y + self.plane.y * move_speed).floor() as usize]
+        == 0
+      {
+        self.player.position.y += self.plane.y * move_speed;
+      }
+      moving = true;
+    }
+
+    if window.left_down {
+      if self.map.data[(self.player.position.x - self.plane.x * move_speed).round() as usize]
+        [(self.player.position.y).floor() as usize]
+        == 0
+      {
+        self.player.position.x -= self.plane.x * move_speed;
+      }
+      if self.map.data[(self.player.position.x).floor() as usize]
+        [(self.player.position.y - self.plane.y * move_speed).floor() as usize]
+        == 0
+      {
+        self.player.position.y -= self.plane.y * move_speed;
+      }
+      moving = true;
+    }
+
+    // println!("{}", window.mouse_delta);
 
     let mouse_delta = window.mouse_delta;
-
     let rot_speed = mouse_delta.x;
-
     let old_dir_x = self.player.direction.x;
-
-    self.player.direction.x = self.player.direction.x * (-rot_speed).cos() - self.player.direction.y * (-rot_speed).sin();
-
-    self.player.direction.y = old_dir_x * (-rot_speed).sin() + self.player.direction.y * (-rot_speed).cos();
-
+    self.player.direction.x =
+      self.player.direction.x * (-rot_speed).cos() - self.player.direction.y * (-rot_speed).sin();
+    self.player.direction.y =
+      old_dir_x * (-rot_speed).sin() + self.player.direction.y * (-rot_speed).cos();
     let old_plane_x = self.plane.x.clone();
-
     self.plane.x = self.plane.x * (-rot_speed).cos() - self.plane.y * (-rot_speed).sin();
-
     self.plane.y = old_plane_x * (-rot_speed).sin() + self.plane.y * (-rot_speed).cos();
-
   }
 
   ///
@@ -211,6 +273,6 @@ impl World {
   pub fn on_tick(&mut self, delta: f64, window: &WinHandler) {
     // println!("tick tock {}", delta)
 
-    self.do_player_controls(window);
+    self.do_player_controls(delta, window);
   }
 }

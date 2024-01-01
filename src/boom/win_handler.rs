@@ -22,6 +22,10 @@ pub struct WinHandler {
   mouse_captured: bool,
   pub mouse_delta: DVec2,
   mouse_sensitivity: f64,
+  pub forward_down: bool,
+  pub backward_down: bool,
+  pub left_down: bool,
+  pub right_down: bool,
 }
 
 impl WinHandler {
@@ -35,6 +39,10 @@ impl WinHandler {
       mouse_captured: false,
       mouse_delta: DVec2::new(0.0, 0.0),
       mouse_sensitivity: 10.0,
+      forward_down: false,
+      backward_down: false,
+      left_down: false,
+      right_down: false,
     };
 
     // I'm doing this a bit differently than I usually do.
@@ -146,6 +154,10 @@ impl WinHandler {
   pub fn poll(&mut self) {
     self.mouse_delta.x = 0.0;
     self.mouse_delta.y = 0.0;
+    self.forward_down = false;
+    self.backward_down = false;
+    self.left_down = false;
+    self.right_down = false;
 
     let mut event_pump = self.sdl_context.as_ref().unwrap().event_pump().unwrap();
 
@@ -195,6 +207,11 @@ impl WinHandler {
         } => match keycode {
           Some(key) => match key {
             Keycode::E => self.toggle_mouse_capture(),
+            Keycode::W => self.forward_down = true,
+            Keycode::S => self.backward_down = true,
+            Keycode::A => self.left_down = true,
+            Keycode::D => self.right_down = true,
+
             Keycode::Escape => self.quit_received = true,
             _ => (),
           },
