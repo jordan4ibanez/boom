@@ -1,3 +1,4 @@
+use glam::IVec2;
 use sdl2::{pixels::PixelFormatEnum, render::Texture};
 
 use super::{win_handler::WinHandler, world::World};
@@ -15,7 +16,7 @@ impl Renderer {
   ///
   /// The actual raycast into the world. Draws to the framebuffer.
   ///
-  fn raycast(&mut self, world: &mut World, texture: &mut Texture) {}
+  fn raycast(&mut self, world: &mut World, texture: &mut Texture, window_size: &IVec2) {}
 
   ///
   /// Handles all logic for drawing things to the Window's framebuffer.
@@ -36,7 +37,7 @@ impl Renderer {
       .map_err(|e| panic!("{}", e))
       .unwrap();
 
-    self.raycast(world, &mut texture);
+    self.raycast(world, &mut texture, window_size);
 
     // surface
     //   .with_lock(None, |buffer, pitch| {
