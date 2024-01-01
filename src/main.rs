@@ -1,3 +1,7 @@
+use boom::Boom;
+
+mod boom;
+
 fn main() {
-  println!("Hello, world!");
+  Boom::new().main();
 }
