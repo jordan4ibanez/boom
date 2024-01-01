@@ -156,7 +156,14 @@ impl Map {
   }
 }
 
+///
+/// World is the master container for all worldly things.
+/// Like the player, enemies, map data, bullets.
+///
+/// Neat.
+///
 pub struct World {
+  player: Player,
   mobs: Vec<Mob>,
   bullet: HashMap<String, Bullet>,
   map: Map,
@@ -165,6 +172,7 @@ pub struct World {
 impl World {
   pub fn new() -> Self {
     World {
+      player: Player::new(),
       mobs: vec![],
       bullet: HashMap::new(),
       map: Map::new(),
