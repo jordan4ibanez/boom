@@ -23,7 +23,7 @@ impl Player {
 }
 
 ///
-/// Enemies in the game.
+/// Enemies in the game. If you can call them that.
 ///
 struct Mob {
   alive: bool,

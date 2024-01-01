@@ -39,13 +39,13 @@ impl Boom {
       self.should_close = true;
     }
 
-    self.world.on_tick(self.delta);
+    // self.world.on_tick(self.delta);
 
     self
       .window
       .change_title(format!("Boom | delta: {}", self.delta).as_str());
 
-    self.renderer.draw(&mut self.window);
+    self.renderer.draw(&mut self.window, &self.world);
 
     self.loop_helper.loop_sleep();
   }

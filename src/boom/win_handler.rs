@@ -84,7 +84,7 @@ impl WinHandler {
 
   ///
   /// Draws a texture straight into the canvas.
-  /// 
+  ///
   /// Also shows it immediately.
   ///
   pub fn draw(&mut self, texture: &Texture) {
@@ -119,6 +119,7 @@ impl WinHandler {
           win_event,
         } => match win_event {
           event::WindowEvent::Resized(x, y) => {
+            println!("window resized | {} | {} |", x, y);
             self.window_size.x = x;
             self.window_size.y = y;
           }
