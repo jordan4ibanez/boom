@@ -16,7 +16,20 @@ impl Renderer {
   ///
   /// The actual raycast into the world. Draws to the framebuffer.
   ///
-  fn raycast(&mut self, world: &World, window_size: &IVec2, buffer: &mut [u8], pitch: usize) {}
+  /// This is oddly powerful feeling.
+  ///
+  fn raycast(&mut self, world: &World, window_size: &IVec2, buffer: &mut [u8], pitch: usize) {
+    for y in 0..window_size.y as usize {
+      for x in 0..window_size.x as usize {
+        let index = y * pitch + x * 4;
+
+        buffer[index] = x as u8;
+        buffer[index + 1] = y as u8;
+        buffer[index + 2] = 0;
+        buffer[index + 3] = 255;
+      }
+    }
+  }
 
   ///
   /// Handles all logic for drawing things to the Window's framebuffer.
@@ -37,20 +50,10 @@ impl Renderer {
       .map_err(|e| panic!("{}", e))
       .unwrap();
 
+    // We can pass the self raycasting function straight into a write lock closure. Incredible.
     texture
       .with_lock(None, |buffer, pitch| {
         self.raycast(world, window_size, buffer, pitch);
-
-        // for y in 0..window_size.y as usize {
-        //   for x in 0..window_size.x as usize {
-        //     let index = y * pitch + x * 4;
-
-        //     buffer[index] = x as u8;
-        //     buffer[index + 1] = y as u8;
-        //     buffer[index + 2] = 0;
-        //     buffer[index + 3] = 255;
-        //   }
-        // }
       })
       .unwrap();
 
