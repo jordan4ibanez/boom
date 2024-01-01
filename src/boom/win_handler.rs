@@ -57,7 +57,7 @@ impl WinHandler {
       .as_ref()
       .unwrap()
       .window(
-        "test1234",
+        "boom",
         new_window.window_size.x as u32,
         new_window.window_size.y as u32,
       )
