@@ -1,23 +1,23 @@
 use std::collections::HashMap;
 
+use glam::DVec2;
 use glam::IVec2;
-use glam::Vec2;
 
 ///
 /// The player. It's you!
 ///
-struct Player {
+pub struct Player {
   alive: bool,
-  position: Vec2,
-  direction: Vec2,
+  pub position: DVec2,
+  pub direction: DVec2,
 }
 
 impl Player {
   pub fn new() -> Self {
     Player {
       alive: true,
-      position: Vec2::new(22.0, 12.0),
-      direction: Vec2::new(-1.0, 0.0),
+      position: DVec2::new(22.0, 12.0),
+      direction: DVec2::new(-1.0, 0.0),
     }
   }
 }
@@ -27,12 +27,12 @@ impl Player {
 ///
 struct Mob {
   alive: bool,
-  position: Vec2,
+  position: DVec2,
   yaw: f64,
   sprite: usize,
 }
 impl Mob {
-  pub fn new(position: Vec2) -> Self {
+  pub fn new(position: DVec2) -> Self {
     Mob {
       alive: true,
       position,
@@ -46,12 +46,12 @@ impl Mob {
 /// The bullet the player can shoot. Pew pew.
 ///
 struct Bullet {
-  position: Vec2,
-  direction: Vec2,
+  position: DVec2,
+  direction: DVec2,
 }
 
 impl Bullet {
-  pub fn new(position: Vec2, direction: Vec2) -> Self {
+  pub fn new(position: DVec2, direction: DVec2) -> Self {
     Bullet {
       position,
       direction,
@@ -163,11 +163,11 @@ impl Map {
 /// Neat.
 ///
 pub struct World {
-  player: Player,
-  mobs: Vec<Mob>,
-  bullet: HashMap<String, Bullet>,
-  map: Map,
-  plane: Vec2,
+  pub player: Player,
+  pub mobs: Vec<Mob>,
+  pub bullet: HashMap<String, Bullet>,
+  pub map: Map,
+  pub plane: DVec2,
 }
 
 impl World {
@@ -177,7 +177,7 @@ impl World {
       mobs: vec![],
       bullet: HashMap::new(),
       map: Map::new(),
-      plane: Vec2::new(0.0, 0.66),
+      plane: DVec2::new(0.0, 0.66),
     }
   }
 
