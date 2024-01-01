@@ -62,7 +62,7 @@ impl Bullet {
 ///
 /// Raw map data.
 ///
-struct Map {
+pub struct Map {
   min: IVec2,
   max: IVec2,
   data: Box<[[i32; 24]; 24]>,
