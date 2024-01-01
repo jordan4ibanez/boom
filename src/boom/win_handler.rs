@@ -1,8 +1,14 @@
 #[cfg(feature = "raw-window-handle")]
 use std::ops::Deref;
 
+use glam::IVec2;
 use sdl2::{
-  event, pixels::PixelFormatEnum, rect::Rect, render::Canvas, video::Window, Sdl, VideoSubsystem,
+  event::{self, EventPollIterator},
+  pixels::PixelFormatEnum,
+  rect::Rect,
+  render::{Canvas, Texture},
+  video::Window,
+  Sdl, VideoSubsystem,
 };
 
 ///
@@ -13,8 +19,9 @@ use sdl2::{
 pub struct WinHandler {
   sdl_context: Option<Sdl>,
   video_subsystem: Option<VideoSubsystem>,
-  canvas: Option<Canvas<Window>>,
+  pub canvas: Option<Canvas<Window>>,
   pub quit_received: bool,
+  pub window_size: IVec2,
 }
 
 impl WinHandler {
@@ -24,6 +31,7 @@ impl WinHandler {
       video_subsystem: None,
       canvas: None,
       quit_received: false,
+      window_size: IVec2::new(512, 512),
     };
 
     // I'm doing this a bit differently than I usually do.
@@ -40,7 +48,11 @@ impl WinHandler {
       .video_subsystem
       .as_ref()
       .unwrap()
-      .window("test1234", 549, 590)
+      .window(
+        "test1234",
+        new_window.window_size.x as u32,
+        new_window.window_size.y as u32,
+      )
       .resizable()
       .position_centered()
       .build()
@@ -55,39 +67,6 @@ impl WinHandler {
         .unwrap(),
     );
 
-    // And then finally, we create the surface to draw on.
-    let texture_creator = new_window.canvas.as_ref().unwrap().texture_creator();
-    let mut surface = texture_creator
-      .create_texture_streaming(PixelFormatEnum::RGBA8888, 256, 256)
-      .map_err(|e| panic!("{}", e))
-      .unwrap();
-
-    surface
-      .with_lock(None, |buffer, pitch| {
-        for y in 0..256 {
-          for x in 0..256 {
-            let index = y * pitch + x * 4;
-
-            buffer[index] = x as u8;
-            buffer[index + 1] = y as u8;
-            buffer[index + 2] = 0;
-            buffer[index + 3] = 255;
-          }
-        }
-      })
-      .unwrap();
-
-    new_window.canvas.as_mut().unwrap().clear();
-
-    new_window
-      .canvas
-      .as_mut()
-      .unwrap()
-      .copy(&surface, None, Rect::new(0, 0, 256, 256))
-      .unwrap();
-
-    new_window.canvas.as_mut().unwrap().present();
-
     new_window
   }
 
@@ -95,7 +74,31 @@ impl WinHandler {
   /// Changes the game window title to whatever you want.
   ///
   pub fn change_title(&mut self, new_title: &str) {
-    // self.window.as_ref().unwrap().set_title(new_title);
+    self
+      .canvas
+      .as_mut()
+      .unwrap()
+      .window_mut()
+      .set_title(new_title)
+      .unwrap();
+  }
+
+  ///
+  /// Draws a texture straight into the canvas.
+  ///
+  pub fn draw(&mut self, texture: &Texture) {
+    self
+      .canvas
+      .as_mut()
+      .unwrap()
+      .copy(
+        texture,
+        None,
+        Rect::new(0, 0, self.window_size.x as u32, self.window_size.y as u32),
+      )
+      .unwrap();
+
+    self.canvas.as_mut().unwrap().present();
   }
 
   ///
@@ -109,6 +112,17 @@ impl WinHandler {
         event::Event::Quit { timestamp } => {
           self.quit_received = true;
         }
+        event::Event::Window {
+          timestamp,
+          window_id,
+          win_event,
+        } => match win_event {
+          event::WindowEvent::Resized(x, y) => {
+            self.window_size.x = x;
+            self.window_size.y = y;
+          }
+          _ => (),
+        },
         _ => (),
       }
     }
