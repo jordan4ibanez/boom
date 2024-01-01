@@ -40,7 +40,7 @@ impl WinHandler {
       .video_subsystem
       .as_ref()
       .unwrap()
-      .window("test1234", 549, 12345)
+      .window("test1234", 549, 590)
       .resizable()
       .position_centered()
       .build()

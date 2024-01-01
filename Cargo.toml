@@ -19,6 +19,7 @@ dead_code = "allow"
 unused_variables = "allow"
 
 [dependencies]
+glam = "0.25.0"
 
 sdl2 = { version = "0.36.0", features = ["bundled"] }
 spin_sleep = "1.1.1"
