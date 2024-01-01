@@ -1,4 +1,4 @@
-use std::collections::{hash_map, HashMap};
+use std::collections::HashMap;
 
 use glam::Vec2;
 
@@ -19,11 +19,17 @@ impl Mob {
   }
 }
 
-struct Bullet {}
+struct Bullet {
+  position: Vec2,
+  direction: Vec2,
+}
 
 impl Bullet {
-  pub fn new() -> Self {
-    Bullet {}
+  pub fn new(position: Vec2, direction: Vec2) -> Self {
+    Bullet {
+      position,
+      direction,
+    }
   }
 }
 
