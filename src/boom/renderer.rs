@@ -33,6 +33,8 @@ impl Renderer {
     let pos = world.player.position;
     let map_pos = IVec2::new(pos.x.floor() as i32, pos.y.floor() as i32);
 
+    // The original tutorial is absurdly unsafe so I fixed it up.
+
     for x in 0..w {
       let camera_x = 2.0 * (x as f64) / (w as f64) - 1.0;
 
@@ -57,7 +59,9 @@ impl Renderer {
 
       let mut step = IVec2::new(0, 0);
 
-      
+      let mut hit = 0;
+
+      let mut side = 0;
     }
   }
 
