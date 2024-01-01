@@ -1,9 +1,7 @@
-#[cfg(feature = "raw-window-handle")]
-use std::ops::Deref;
-
 use glam::IVec2;
 use sdl2::{
   event::{self},
+  keyboard::Keycode,
   rect::Rect,
   render::{Canvas, Texture},
   video::Window,
@@ -21,6 +19,7 @@ pub struct WinHandler {
   pub canvas: Option<Canvas<Window>>,
   pub quit_received: bool,
   pub window_size: IVec2,
+  mouse_captured: bool,
 }
 
 impl WinHandler {
@@ -31,6 +30,7 @@ impl WinHandler {
       canvas: None,
       quit_received: false,
       window_size: IVec2::new(512, 512),
+      mouse_captured: false,
     };
 
     // I'm doing this a bit differently than I usually do.
@@ -40,6 +40,15 @@ impl WinHandler {
     sdl2::hint::set("SDL_VIDEO_EXTERNAL_CONTEXT", "1");
 
     new_window.sdl_context = Some(sdl2::init().unwrap());
+
+    let monitor = new_window
+      .sdl_context
+      .as_ref()
+      .unwrap()
+      .video()
+      .unwrap()
+      .display_mode(0, 0)
+      .unwrap();
 
     new_window.video_subsystem = Some(new_window.sdl_context.as_ref().unwrap().video().unwrap());
 
@@ -67,6 +76,31 @@ impl WinHandler {
     );
 
     new_window
+      .sdl_context
+      .as_ref()
+      .unwrap()
+      .mouse()
+      .capture(true);
+
+    new_window
+  }
+
+  fn toggle_mouse_capture(&mut self) {
+    self.mouse_captured = !self.mouse_captured;
+
+    self
+      .sdl_context
+      .as_ref()
+      .unwrap()
+      .mouse()
+      .show_cursor(!self.mouse_captured);
+
+    self
+      .sdl_context
+      .as_ref()
+      .unwrap()
+      .mouse()
+      .set_relative_mouse_mode(self.mouse_captured);
   }
 
   ///
@@ -124,6 +158,22 @@ impl WinHandler {
             self.window_size.y = y;
           }
           _ => (),
+        },
+
+        event::Event::KeyDown {
+          timestamp,
+          window_id,
+          keycode,
+          scancode,
+          keymod,
+          repeat,
+        } => match keycode {
+          Some(key) => match key {
+            Keycode::E => self.toggle_mouse_capture(),
+            Keycode::Escape => self.quit_received = true,
+            _ => (),
+          },
+          None => (),
         },
         _ => (),
       }

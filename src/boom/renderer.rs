@@ -1,13 +1,7 @@
-use std::{
-  cell::RefCell,
-  mem::swap,
-  sync::{Arc, RwLock},
-};
+use std::mem::swap;
 
-use rayon::prelude::*;
+use glam::{DVec2, IVec2};
 
-use glam::{DVec2, IVec2, IVec4};
-use rand::Rng;
 use sdl2::pixels::PixelFormatEnum;
 
 use super::{win_handler::WinHandler, world::World};
@@ -198,17 +192,17 @@ impl Renderer {
         b /= 2;
       }
 
-      // draw_line(x, draw_start, x, draw_end, r, g, b, a);
+      draw_line(x, draw_start, x, draw_end, r, g, b, a);
     }
 
-    let mut random = rand::thread_rng();
-    let mut cool = || -> u8 { random.gen_range(0..255) as u8 };
-    
-    for y in 0..window_size.y {
-      for x in 0..window_size.x {
-        draw_pixel(x as usize, y as usize, cool(), cool(), cool(), cool());
-      }
-    }
+    // let mut random = rand::thread_rng();
+    // let mut cool = || -> u8 { random.gen_range(0..255) as u8 };
+
+    // for y in 0..window_size.y {
+    //   for x in 0..window_size.x {
+    //     draw_pixel(x as usize, y as usize, cool(), cool(), cool(), cool());
+    //   }
+    // }
 
     // || {
 
