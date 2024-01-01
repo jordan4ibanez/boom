@@ -201,13 +201,14 @@ impl Renderer {
       // draw_line(x, draw_start, x, draw_end, r, g, b, a);
     }
 
-    (0..window_size.y).for_each(|y| {
-      let mut random = rand::thread_rng();
-      let mut cool = || -> u8 { random.gen_range(0..255) as u8 };
+    let mut random = rand::thread_rng();
+    let mut cool = || -> u8 { random.gen_range(0..255) as u8 };
+    
+    for y in 0..window_size.y {
       for x in 0..window_size.x {
         draw_pixel(x as usize, y as usize, cool(), cool(), cool(), cool());
       }
-    });
+    }
 
     // || {
 
