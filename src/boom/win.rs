@@ -47,7 +47,10 @@ impl Win {
     new_window
   }
 
-  pub fn change_title(&mut self) {
-    self.window.as_ref().unwrap().set_title("hello");
+  ///
+  /// Changes the game window title to whatever you want.
+  ///
+  pub fn change_title(&mut self, new_title: &str) {
+    self.window.as_ref().unwrap().set_title(new_title);
   }
 }
