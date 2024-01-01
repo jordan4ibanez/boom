@@ -30,11 +30,34 @@ impl Renderer {
     let w = window_size.x;
     let dir = world.player.direction;
     let plane = world.plane;
+    let pos = world.player.position;
+    let map_pos = IVec2::new(pos.x.floor() as i32, pos.y.floor() as i32);
 
     for x in 0..w {
       let camera_x = 2.0 * (x as f64) / (w as f64) - 1.0;
 
       let ray_direction = DVec2::new(dir.x + plane.x * camera_x, 0.0);
+
+      let mut side_dist = DVec2::new(0.0, 0.0);
+
+      let delta_dist = DVec2::new(
+        if ray_direction.x == 0.0 {
+          1e30
+        } else {
+          (1.0 / ray_direction.x).abs()
+        },
+        if ray_direction.y == 0.0 {
+          1e30
+        } else {
+          (1.0 / ray_direction.y).abs()
+        },
+      );
+
+      let mut perp_wall_dist = 0.0;
+
+      let mut step = IVec2::new(0, 0);
+
+      
     }
   }
 
